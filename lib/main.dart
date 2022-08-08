@@ -30,16 +30,24 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<String> imageCollection = [
+    'https://images.pexels.com/photos/8096705/pexels-photo-8096705.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+    'https://images.pexels.com/photos/7934304/pexels-photo-7934304.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+    'https://images.pexels.com/photos/866876/pexels-photo-866876.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+    'https://images.pexels.com/photos/2850850/pexels-photo-2850850.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+    'https://images.pexels.com/photos/2559484/pexels-photo-2559484.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: const Center(
+        body: Center(
             child: ImageStack(
-                imageUrl:
-                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy1EREy6-pysO2QjdnbiZ-1aUWLdIjPWhuKZ49UvCu&s',
-                rotationAngle: 0.8)));
+          imageCollection: imageCollection,
+          stackStyle: StackStyle.zigZag,
+        )));
   }
 }

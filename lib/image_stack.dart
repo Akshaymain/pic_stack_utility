@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class ProfileImage extends StatelessWidget {
+class ImageStack extends StatelessWidget {
   final String imageUrl;
   final double rotationAngle;
   final double opacity;
 
-  const ProfileImage({
+  const ImageStack({
     Key? key,
     required this.imageUrl,
     required this.rotationAngle,

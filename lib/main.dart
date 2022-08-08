@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pic_stack_utility/profile_image_holder.dart';
+import 'package:pic_stack_utility/image_stack.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
           title: Text(widget.title),
         ),
         body: const Center(
-            child: ProfileImage(
+            child: ImageStack(
                 imageUrl:
                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy1EREy6-pysO2QjdnbiZ-1aUWLdIjPWhuKZ49UvCu&s',
                 rotationAngle: 0.8)));

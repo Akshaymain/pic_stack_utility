@@ -8,7 +8,7 @@ enum StackStyle {
   const StackStyle(this.value);
 }
 
-class ImageStack extends StatelessWidget {
+class ImageStack extends StatefulWidget {
   final List<String> imageCollection;
   final StackStyle stackStyle;
   final double frameWidth;
@@ -28,14 +28,21 @@ class ImageStack extends StatelessWidget {
       this.frameBorderStyle = BorderStyle.none})
       : super(key: key);
 
+  @override
+  State<ImageStack> createState() => _ImageStakeState();
+}
+
+class _ImageStakeState extends State<ImageStack> {
+  bool switchToPhotoRollView = false;
+
   double calculateRotationAngle(int itemKey) {
-    switch (stackStyle) {
+    switch (widget.stackStyle) {
       case StackStyle.card:
-        return itemKey * stackStyle.value;
+        return itemKey * widget.stackStyle.value;
       case StackStyle.zigZag:
         return itemKey % 2 == 0
-            ? itemKey * stackStyle.value
-            : itemKey * -stackStyle.value;
+            ? itemKey * widget.stackStyle.value
+            : itemKey * -widget.stackStyle.value;
       default:
         return 0.1;
     }
@@ -47,14 +54,14 @@ class ImageStack extends StatelessWidget {
       child: Opacity(
         opacity: 1.0,
         child: Container(
-            width: frameWidth,
-            height: frameHeight,
+            width: widget.frameWidth,
+            height: widget.frameHeight,
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               border: Border.all(
-                  color: frameBorderColor,
-                  width: frameBorderWidth,
-                  style: frameBorderStyle),
+                  color: widget.frameBorderColor,
+                  width: widget.frameBorderWidth,
+                  style: widget.frameBorderStyle),
               borderRadius: BorderRadius.circular(5),
             ),
             child: Image.network(imageUrl)),
@@ -62,10 +69,9 @@ class ImageStack extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget imageStack() {
     return Stack(
-        children: imageCollection
+        children: widget.imageCollection
             .asMap()
             .entries
             .map((item) => imageHolder(
@@ -73,5 +79,24 @@ class ImageStack extends StatelessWidget {
                   calculateRotationAngle(item.key),
                 ))
             .toList());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => {
+        setState(() {
+          switchToPhotoRollView = !switchToPhotoRollView;
+        }),
+        print(switchToPhotoRollView)
+      },
+      child: switchToPhotoRollView
+          ? Container(
+              width: 250,
+              height: 250,
+              color: Colors.red,
+            )
+          : imageStack(),
+    );
   }
 }

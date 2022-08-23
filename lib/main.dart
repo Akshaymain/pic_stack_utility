@@ -30,7 +30,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool switchToPhotoRollView = false;
   List<String> imageCollection = [
     'https://images.pexels.com/photos/8096705/pexels-photo-8096705.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
     'https://images.pexels.com/photos/7934304/pexels-photo-7934304.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',

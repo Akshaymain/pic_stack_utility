@@ -69,8 +69,9 @@ class _ImageStakeState extends State<ImageStack> {
     );
   }
 
-  Widget imageStack() {
+  Widget imageStack({required Key key}) {
     return Stack(
+        key: key,
         children: widget.imageCollection
             .asMap()
             .entries
@@ -83,20 +84,46 @@ class _ImageStakeState extends State<ImageStack> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => {
-        setState(() {
-          switchToPhotoRollView = !switchToPhotoRollView;
-        }),
-        print(switchToPhotoRollView)
+    return AnimatedSwitcher(
+      duration: const Duration(seconds: 1),
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return ScaleTransition(scale: animation, child: child);
       },
-      child: switchToPhotoRollView
-          ? Container(
-              width: 250,
-              height: 250,
-              color: Colors.red,
-            )
-          : imageStack(),
+      child: GestureDetector(
+        onVerticalDragDown: (details) => {
+          setState(() {
+            switchToPhotoRollView = !switchToPhotoRollView;
+          }),
+          print(switchToPhotoRollView)
+        },
+        child: switchToPhotoRollView
+            ? Stack(key: const ValueKey(1), children: <Widget>[
+                Container(
+                  color: Colors.grey.withOpacity(0.3),
+                ),
+                Center(
+                  child: SizedBox(
+                    height: 250,
+                    child: ListView.builder(
+                      itemCount: widget.imageCollection.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: ((context, index) => Container(
+                            height: 250,
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: Image.network(
+                              widget.imageCollection[
+                                  (widget.imageCollection.length - 1) - index],
+                              fit: BoxFit.cover,
+                            ),
+                          )),
+                    ),
+                  ),
+                )
+              ])
+            : imageStack(key: const ValueKey(2)),
+      ),
     );
   }
 }

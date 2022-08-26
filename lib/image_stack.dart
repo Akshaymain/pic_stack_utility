@@ -33,7 +33,8 @@ class ImageStack extends StatefulWidget {
 }
 
 class _ImageStakeState extends State<ImageStack> {
-  bool switchToPhotoRollView = false;
+  //bool switchToPhotoRollView = false;
+  Widget? renderingWidget;
 
   double calculateRotationAngle(int itemKey) {
     switch (widget.stackStyle) {
@@ -70,60 +71,69 @@ class _ImageStakeState extends State<ImageStack> {
   }
 
   Widget imageStack({required Key key}) {
-    return Stack(
-        key: key,
-        children: widget.imageCollection
-            .asMap()
-            .entries
-            .map((item) => imageHolder(
-                  item.value,
-                  calculateRotationAngle(item.key),
-                ))
-            .toList());
+    return GestureDetector(
+      onTap: () => {
+        setState(() {
+          renderingWidget = imageRoll(key: const ValueKey(2));
+        }),
+      },
+      child: Stack(
+          key: key,
+          children: widget.imageCollection
+              .asMap()
+              .entries
+              .map((item) => imageHolder(
+                    item.value,
+                    calculateRotationAngle(item.key),
+                  ))
+              .toList()),
+    );
+  }
+
+  Widget imageRoll({required Key key}) {
+    double differenceInDrag = 0.0;
+    return GestureDetector(
+      onVerticalDragStart: (details) =>
+          differenceInDrag = details.globalPosition.dy,
+      onVerticalDragUpdate: (details) => {
+        if (differenceInDrag < details.globalPosition.dy &&
+            details.globalPosition.dy - differenceInDrag > 50.0)
+          {
+            setState(() {
+              renderingWidget = imageStack(key: const ValueKey(1));
+            }),
+          }
+      },
+      child: Center(
+        child: SizedBox(
+          height: 250,
+          child: ListView.builder(
+            itemCount: widget.imageCollection.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: ((context, index) => Container(
+                  height: 250,
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
+                  child: Image.network(
+                    widget.imageCollection[
+                        (widget.imageCollection.length - 1) - index],
+                    fit: BoxFit.cover,
+                  ),
+                )),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-      duration: const Duration(seconds: 1),
-      transitionBuilder: (Widget child, Animation<double> animation) {
-        return ScaleTransition(scale: animation, child: child);
-      },
-      child: GestureDetector(
-        onVerticalDragDown: (details) => {
-          setState(() {
-            switchToPhotoRollView = !switchToPhotoRollView;
-          }),
-          print(switchToPhotoRollView)
-        },
-        child: switchToPhotoRollView
-            ? Stack(key: const ValueKey(1), children: <Widget>[
-                Container(
-                  color: Colors.grey.withOpacity(0.3),
-                ),
-                Center(
-                  child: SizedBox(
-                    height: 250,
-                    child: ListView.builder(
-                      itemCount: widget.imageCollection.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: ((context, index) => Container(
-                            height: 250,
-                            margin: const EdgeInsets.symmetric(horizontal: 5),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0)),
-                            child: Image.network(
-                              widget.imageCollection[
-                                  (widget.imageCollection.length - 1) - index],
-                              fit: BoxFit.cover,
-                            ),
-                          )),
-                    ),
-                  ),
-                )
-              ])
-            : imageStack(key: const ValueKey(2)),
-      ),
-    );
+        duration: const Duration(seconds: 1),
+        // transitionBuilder: (Widget child, Animation<double> animation) {
+        //   return ScaleTransition(scale: animation, child: child);
+        // },
+        child: renderingWidget ?? imageStack(key: const ValueKey(1)));
   }
 }
